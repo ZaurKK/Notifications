@@ -176,7 +176,6 @@ namespace Notifications
             string[] notificationFilePaths = Directory.GetFiles(scanFolder, string.Concat("Disp", "*.xlsx"), SearchOption.TopDirectoryOnly);
             foreach (var file in notificationFilePaths)
             {
-                //using (var package = new ExcelPackage(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 using (var package = new ExcelPackage(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                 {
                     var excelWorksheet = package.Workbook.Worksheets.First();
@@ -356,11 +355,11 @@ namespace Notifications
                                 else if (j == mkbColId)
                                     mkb = cellValue;
                                 else if (j == telHomeColId)
-                                    telHome = string.Concat(cellValue.Where(c => Char.IsDigit(c)));
+                                    telHome = string.Concat(cellValue.Where(c => char.IsDigit(c)));
                                 else if (j == telWorkColId)
-                                    telWork = string.Concat(cellValue.Where(c => Char.IsDigit(c)));
+                                    telWork = string.Concat(cellValue.Where(c => char.IsDigit(c)));
                                 else if (j == telMobileColId)
-                                    telMobile = string.Concat(cellValue.Where(c => Char.IsDigit(c)));
+                                    telMobile = string.Concat(cellValue.Where(c => char.IsDigit(c)));
                                 else if (j == notificationFirstColId)
                                     notificationFirst = cellValue;
                                 else if (j == notificationDateColId)
@@ -380,10 +379,10 @@ namespace Notifications
                             }
 
                             var personList = lDoc.Element(PERS_LIST).Elements(PERS).Where(pers =>
-                                            string.Equals(pers.Element(IM).Value.ToLower(), firstName.ToLower()) &&
-                                            string.Equals(pers.Element(FAM).Value.ToLower(), lastName.ToLower()) &&
-                                            string.Equals(pers.Element(OT).Value.ToLower(), fathersName.ToLower()) &&
-                                            string.Equals(pers.Element(DR).Value.ToLower(), birthDate.ToLower()));
+                                                string.Equals(pers.Element(IM).Value.ToLower(), firstName.ToLower()) &&
+                                                string.Equals(pers.Element(FAM).Value.ToLower(), lastName.ToLower()) &&
+                                                string.Equals(pers.Element(OT).Value.ToLower(), fathersName.ToLower()) &&
+                                                string.Equals(pers.Element(DR).Value.ToLower(), birthDate.ToLower()));
                             if (personList.Count() > 0)
                             {
                                 readRows.Add(i);                                
@@ -515,14 +514,13 @@ namespace Notifications
 
                                     if (deleteItemCount++ > 0)
                                         deleteCmdText += " or ";
-                                    deleteCmdText += string.Format("(first_name=@first_name_{0} AND last_name=@last_name_{1} AND fathers_name=@fathers_name_{2} AND birth_date=@birth_date_{3})",
-                                                                    deleteItemCount, deleteItemCount, deleteItemCount, deleteItemCount);
+                                    deleteCmdText += $"(first_name=@first_name_{deleteItemCount} AND last_name=@last_name_{deleteItemCount} AND fathers_name=@fathers_name_{deleteItemCount} AND birth_date=@birth_date_{deleteItemCount})";
                                     List<SqlParameter> newDeleteParameters = new List<SqlParameter>()
                                     {
-                                        new SqlParameter(string.Format("@first_name_{0}", deleteItemCount), firstName),
-                                        new SqlParameter(string.Format("@last_name_{0}", deleteItemCount), lastName),
-                                        new SqlParameter(string.Format("@fathers_name_{0}", deleteItemCount), fathersName),
-                                        new SqlParameter(string.Format("@birth_date_{0}", deleteItemCount), birthDate)
+                                        new SqlParameter($"@first_name_{deleteItemCount}", firstName),
+                                        new SqlParameter($"@last_name_{deleteItemCount}", lastName),
+                                        new SqlParameter($"@fathers_name_{deleteItemCount}", fathersName),
+                                        new SqlParameter($"@birth_date_{deleteItemCount}", birthDate)
                                     };
                                     deleteSqlParameters.AddRange(newDeleteParameters);
 
@@ -530,37 +528,36 @@ namespace Notifications
                                         insertCmdText += ", ";
                                     //insertCmdText += string.Format("(@disp_{0}, @id_pac_{1}, @enp_{2}, @smo_{3}, @lpu_{4}, @first_name_{5}, @last_name_{6}, @fathers_name_{7}, @birth_date_{8}, @tel_home_{9}, @tel_work_{10}, @tel_mobile_{11}, @notification1_{12}, @notification2_{13}, @poll_{14}, @date_n1_{15}, @date_n2_{16}, @idrmp_{17}, @ds_{18}, @comments_{19})",
                                     //                            insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount);
-                                    insertCmdText += string.Format("(@disp_{0}, @idcase_{1}, @id_pac_{2}, @enp_{3}, @smo_{4}, @lpu_{5}, @first_name_{6}, @last_name_{7}, @fathers_name_{8}, @birth_date_{9}, @tel_home_{10}, @tel_work_{11}, @tel_mobile_{12}, @notification1_{13}, @notification2_{14}, @poll_{15}, @date_n1_{16}, @date_n2_{17}, @idrmp_{18}, @ds_{19}, @comments_{20})",
-                                                                insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount, insertItemCount);
+                                    insertCmdText += $"(@disp_{insertItemCount}, @idcase_{insertItemCount}, @id_pac_{insertItemCount}, @enp_{insertItemCount}, @smo_{insertItemCount}, @lpu_{insertItemCount}, @first_name_{insertItemCount}, @last_name_{insertItemCount}, @fathers_name_{insertItemCount}, @birth_date_{insertItemCount}, @tel_home_{insertItemCount}, @tel_work_{insertItemCount}, @tel_mobile_{insertItemCount}, @notification1_{insertItemCount}, @notification2_{insertItemCount}, @poll_{insertItemCount}, @date_n1_{insertItemCount}, @date_n2_{insertItemCount}, @idrmp_{insertItemCount}, @ds_{insertItemCount}, @comments_{insertItemCount})";
                                     List<SqlParameter> newInsertParameters = new List<SqlParameter>()
                                     {
-                                        new SqlParameter(string.Format("@disp_{0}", insertItemCount), disp.Value),
-                                        new SqlParameter(string.Format("@idcase_{0}", insertItemCount), ""),
-                                        new SqlParameter(string.Format("@id_pac_{0}", insertItemCount), id_pac.Value),
-                                        new SqlParameter(string.Format("@enp_{0}", insertItemCount), enp.Value),
-                                        new SqlParameter(string.Format("@smo_{0}", insertItemCount), smo.Value),
-                                        new SqlParameter(string.Format("@lpu_{0}", insertItemCount), lpu.Value),
-                                        new SqlParameter(string.Format("@first_name_{0}", insertItemCount), firstName),
-                                        new SqlParameter(string.Format("@last_name_{0}", insertItemCount), lastName),
-                                        new SqlParameter(string.Format("@fathers_name_{0}", insertItemCount), fathersName),
-                                        new SqlParameter(string.Format("@birth_date_{0}", insertItemCount), DateTime.Parse(birthDate)),
-                                        new SqlParameter(string.Format("@tel_home_{0}", insertItemCount), telHome),
-                                        new SqlParameter(string.Format("@tel_work_{0}", insertItemCount), telWork),
-                                        new SqlParameter(string.Format("@tel_mobile_{0}", insertItemCount), telMobile),
-                                        new SqlParameter(string.Format("@notification1_{0}", insertItemCount), notification1),
-                                        new SqlParameter(string.Format("@notification2_{0}", insertItemCount), notification2),
-                                        new SqlParameter(string.Format("@poll_{0}", insertItemCount), poll),
+                                        new SqlParameter($"@disp_{insertItemCount}", disp.Value),
+                                        new SqlParameter($"@idcase_{insertItemCount}", ""),
+                                        new SqlParameter($"@id_pac_{insertItemCount}", id_pac.Value),
+                                        new SqlParameter($"@enp_{insertItemCount}", enp.Value),
+                                        new SqlParameter($"@smo_{insertItemCount}", smo.Value),
+                                        new SqlParameter($"@lpu_{insertItemCount}", lpu.Value),
+                                        new SqlParameter($"@first_name_{insertItemCount}", firstName),
+                                        new SqlParameter($"@last_name_{insertItemCount}", lastName),
+                                        new SqlParameter($"@fathers_name_{insertItemCount}", fathersName),
+                                        new SqlParameter($"@birth_date_{insertItemCount}", DateTime.Parse(birthDate)),
+                                        new SqlParameter($"@tel_home_{insertItemCount}", telHome),
+                                        new SqlParameter($"@tel_work_{insertItemCount}", telWork),
+                                        new SqlParameter($"@tel_mobile_{insertItemCount}", telMobile),
+                                        new SqlParameter($"@notification1_{insertItemCount}", notification1),
+                                        new SqlParameter($"@notification2_{insertItemCount}", notification2),
+                                        new SqlParameter($"@poll_{insertItemCount}", poll),
                                         dateN1 == null ?
-                                            new SqlParameter(string.Format("@date_n1_{0}", insertItemCount), DBNull.Value) :
-                                            new SqlParameter(string.Format("@date_n1_{0}", insertItemCount), DateTime.Parse(dateN1)),
+                                            new SqlParameter($"@date_n1_{insertItemCount}", DBNull.Value) :
+                                            new SqlParameter($"@date_n1_{insertItemCount}", DateTime.Parse(dateN1)),
                                         dateN2 == null ?
-                                            new SqlParameter(string.Format("@date_n2_{0}", insertItemCount), DBNull.Value) :
-                                            new SqlParameter(string.Format("@date_n2_{0}", insertItemCount), DateTime.Parse(dateN2)),
+                                            new SqlParameter($"@date_n2_{insertItemCount}", DBNull.Value) :
+                                            new SqlParameter($"@date_n2_{insertItemCount}", DateTime.Parse(dateN2)),
                                         idrmp == null ?
-                                            new SqlParameter(string.Format("@idrmp_{0}", insertItemCount), DBNull.Value) :
-                                            new SqlParameter(string.Format("@idrmp_{0}", insertItemCount), idrmp.Value),
-                                        new SqlParameter(string.Format("@ds_{0}", insertItemCount), ds),
-                                        new SqlParameter(string.Format("@comments_{0}", insertItemCount), comments)
+                                            new SqlParameter($"@idrmp_{insertItemCount}", DBNull.Value) :
+                                            new SqlParameter($"@idrmp_{insertItemCount}", idrmp.Value),
+                                        new SqlParameter($"@ds_{insertItemCount}", ds),
+                                        new SqlParameter($"@comments_{insertItemCount}", comments)
                                     };
                                     insertSqlParameters.AddRange(newInsertParameters);
 
@@ -573,7 +570,7 @@ namespace Notifications
                                             SaveDpoFile(dpoFilePath, dpoDoc);
                                     }
 
-                                    Console.Write("\rCount={0} - {1}-й архив", totalCount, totalSplitCount);
+                                    Console.Write($"\rCount={totalCount} - {totalSplitCount}-й архив");
                                     if (totalCount >= SPLIT_COUNT)
                                     {
                                         CreateArchive(dpoFilePath, force);
@@ -608,26 +605,34 @@ namespace Notifications
 
         private bool ExecuteBatch(SqlConnection sqlConnection, List<SqlParameter> deleteSqlParameters, string deleteCmdText, List<SqlParameter> insertSqlParameters, string insertCmdText)
         {
-            using (SqlCommand deleteCommand = new SqlCommand(deleteCmdText, sqlConnection))
+            try
             {
-                //deleteCommand.Connection = sqlConnection;
-                deleteCommand.Parameters.AddRange(deleteSqlParameters.ToArray());
-                deleteCommand.ExecuteNonQuery();
-                //int result = Method(sqlConnection, deleteCommand).Result;
-
-                using (SqlCommand insertCommand = new SqlCommand(insertCmdText, sqlConnection))
+                using (var deleteCommand = new SqlCommand(deleteCmdText, sqlConnection))
                 {
-                    //insertCommand.CommandType = System.Data.CommandType.StoredProcedure;
-                    insertCommand.Parameters.AddRange(insertSqlParameters.ToArray());
-                    insertCommand.ExecuteNonQuery();
-                    //result = Method(sqlConnection, insertCommand).Result;
-                    return true;
+                    //deleteCommand.Connection = sqlConnection;
+                    deleteCommand.Parameters.AddRange(deleteSqlParameters.ToArray());
+                    deleteCommand.ExecuteNonQuery();
+                    //int result = Method(sqlConnection, deleteCommand).Result;
+
+                    using (var insertCommand = new SqlCommand(insertCmdText, sqlConnection))
+                    {
+                        //insertCommand.CommandType = System.Data.CommandType.StoredProcedure;
+                        insertCommand.Parameters.AddRange(insertSqlParameters.ToArray());
+                        insertCommand.ExecuteNonQuery();
+                        //result = Method(sqlConnection, insertCommand).Result;
+                        return true;
+                    }
                 }
             }
-            return false;
+            catch (Exception)
+            {
+                return false;
+
+                throw;
+            }
         }
 
-        private void ExtractArchive(String dplArchiveFilePath, String destinationFolder, bool force)
+        private void ExtractArchive(string dplArchiveFilePath, string destinationFolder, bool force)
         {
             try
             {
@@ -668,14 +673,14 @@ namespace Notifications
             {
                 if (!string.IsNullOrEmpty(dpoFilePath))
                 {
-                    String dpoDirectoryPath = Path.GetDirectoryName(dpoFilePath);
-                    String dpoArchivePath = Path.Combine(Directory.GetParent(dpoDirectoryPath).FullName, string.Concat(Path.GetFileNameWithoutExtension(dpoFilePath), ".zip"));
+                    var dpoDirectoryPath = Path.GetDirectoryName(dpoFilePath);
+                    var dpoArchivePath = Path.Combine(Directory.GetParent(dpoDirectoryPath).FullName, string.Concat(Path.GetFileNameWithoutExtension(dpoFilePath), ".zip"));
                     if (force && File.Exists(dpoArchivePath))
                         File.Delete(dpoArchivePath);
                     //ZipFile.CreateFromDirectory(dpoDirectoryPath, dpoArchivePath);
                     using (var zip = ZipFile.Open(dpoArchivePath, ZipArchiveMode.Create))
                     {
-                        String dpoFileName = Path.GetFileName(dpoFilePath);
+                        var dpoFileName = Path.GetFileName(dpoFilePath);
                         zip.CreateEntryFromFile(dpoFilePath, dpoFileName);
                     }
                     File.Delete(dpoFilePath);

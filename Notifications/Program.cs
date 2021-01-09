@@ -1,12 +1,10 @@
-﻿using System;
-
-using Microsoft.Extensions.CommandLineUtils;
+﻿using Microsoft.Extensions.CommandLineUtils;
 
 namespace Notifications
 {
     class Program
     {
-        private static DPO dpo = new DPO();
+        static DPO DPO { get; } = new DPO();
 
         static void Main(string[] args)
         {
@@ -16,7 +14,7 @@ namespace Notifications
             //var argDPL = cmd.Option("-dpl <value>", "DPL archive file path", CommandOptionType.SingleValue);
             //var argNotify = cmd.Option("-notify <value>", "Path to excel file with noifications", CommandOptionType.SingleValue);
 
-            String scanFolder = "";
+            var scanFolder = "";
             bool force = false;
             cmd.OnExecute(() =>
             {
@@ -30,7 +28,7 @@ namespace Notifications
             cmd.HelpOption("-? | -h | --help");
             cmd.Execute(args);
 
-            dpo.Run(scanFolder, force);
+            DPO.Run(scanFolder, force);
         }
     }
 }
